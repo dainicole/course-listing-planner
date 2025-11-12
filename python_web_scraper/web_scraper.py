@@ -15,8 +15,24 @@ soup = BeautifulSoup(html_content, 'html.parser')
 # find all divs with this html class
 course_wrappers = soup.find_all('div', class_ = course_wrapper_class)
 
+# turns, for example, "CRS_CSE-E81_361S" into "CSE 361"
+def parse_course_id(course_id):
+    import re
+    match = re.search(r"CRS_([A-Z]+).*?_(\d+)", course_id)
+    if match:
+        dept = match.group(1)
+        num = match.group(2)
+        return f"{dept} {num}"
+    else:
+        return None
+
+
 # print data-course-id for each course (see annotated_361.html for example))
 print("code is running!")
 for course in course_wrappers:
-    course_id = course.get('data-course-id')
-    print(course_id)
+    html_wrapper_course_id = course.get('data-course-id')
+    formatted = parse_course_id(html_wrapper_course_id)
+    if formatted:
+        print(formatted)
+    else:
+        print(f"Doesn't match course format: {html_wrapper_course_id}")
