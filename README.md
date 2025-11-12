@@ -5,6 +5,9 @@ Ayla Burba 517938 a-burba
 Nicole Dai 522011 dainicole
 
 
+Project description: We're making a course planner for the CS department where you can easily see the prerequisites for different classes to help decide which classes you should prioritize taking earlier. For example, if you want to take CSE 417, it might have a prerequisite of matrix algebra, which itself needs calculus. Our website would display all of the prerequisites so you don't need to manually search for what each class is. You could also see what other CS courses a given class is a prerequisite for. For example, only after you've taken CSE 361 can you take CSE 422, which is itself a prerequisite for CSE 522, 532, and 542.
+
+
 
 <br><br><br><br><br><br><br><br><br>
 Rubric
@@ -18,12 +21,12 @@ Languages/Frameworks used (30 points)
 | 5        | Neo4j Database                                                                  |             
 | 5        | Python for web scraping                                                         | 
 Functionality (40 points)
-| 10       | can show tree of prerequisites for a given class                                |             
-| 10       | can show tree of postrequisites for a given class                               |             
-| 5        | can show / hide course description                                              |             
-| 5        | can toggle between list and graph                                               |             
-| 5        | can check off courses to indicate you’ve taken them                             |             
-| 5        | can add courses to a list of classes you’d like to take                         |     
+| 10       | Can show tree of prerequisites for a given CSE class                            |             
+| 10       | Can show tree of postrequisites for a given CSE class                           |             
+| 5        | Can show / hide course description                                              |             
+| 5        | Can toggle between list and graph                                               |             
+| 5        | Can check off courses to indicate you’ve taken them                             |             
+| 5        | Can add courses to a list of classes you’d like to take                         |     
 Best Practices (5 points)
 | 3        | Code is readable and well formatted                                             |             
 | 2        | All pages pass the html validator                                               |              
