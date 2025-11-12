@@ -72,3 +72,220 @@ CRS_CSE-E81_499
 CRS_CSE-E81_450A
 CRS_CSE-E81_451A
 CRS_CSE-E81_204A
+
+
+
+
+
+
+
+
+next round of output:
+
+
+Old course id: CSE 541
+    New course id: CSE 5401
+
+Old course id: CSE 659
+    New course id: CSE 5519
+
+Old course id: CSE 411
+    New course id: CSE 4101
+
+Old course id: CSE 587
+    New course id: CSE 5807
+
+Old course id: CSE 543
+    New course id: CSE 5403
+
+Old course id: CSE 347
+    New course id: CSE 3407
+
+Old course id: CSE 515
+    New course id: CSE 5105
+
+Old course id: CSE 427
+    New course id: CSE 4207
+
+Old course id: CSE 533
+    New course id: CSE 5313
+
+Old course id: CSE 525
+    New course id: CSE 5205
+
+Old course id: CSE 362
+    New course id: CSE 3602
+
+Old course id: CSE 560
+    New course id: CSE 5600
+
+Old course id: CSE 542
+    New course id: CSE 5402
+
+Old course id (doesn't match format): COURSE_DEFINITION-3-61543
+    New course id: CSE 7960
+
+Old course id: CSE 314
+    New course id: CSE 3104
+
+Old course id (doesn't match format): COURSE_DEFINITION-3-61495
+    New course id: CSE 5114
+
+Old course id: CSE 514
+    New course id: CSE 5104
+
+Old course id: CSE 416
+    New course id: CSE 4106
+
+Old course id: CSE 247
+    New course id: CSE 2407
+
+Old course id: CSE 510
+    New course id: CSE 5100
+
+Old course id: CSE 699
+    New course id: CSE 8998
+
+Old course id: CSE 467
+    New course id: CSE 4607
+
+Old course id: CSE 554
+    New course id: CSE 5504
+
+Old course id: CSE 400
+    New course id: CSE 4000
+
+Old course id: CSE 400
+    New course id: CSE 4001
+
+Old course id: CSE 500
+    New course id: CSE 5999
+
+Old course id: CSE 419
+    New course id: CSE 4109
+
+Old course id: CSE 412
+    New course id: CSE 4102
+
+Old course id: CSE 132
+    New course id: CSE 1302
+
+Old course id: CSE 131
+    New course id: CSE 1301
+
+Old course id: CSE 433
+    New course id: CSE 4303
+
+Old course id: CSE 442
+    New course id: CSE 4402
+
+Old course id: CSE 217
+    New course id: CSE 2107
+
+Old course id: CSE 260
+    New course id: CSE 2600
+
+Old course id: CSE 591
+    New course id: CSE 5990
+
+Old course id: CSE 256
+    New course id: CSE 2506
+
+Old course id: CSE 311
+    New course id: CSE 3101
+
+Old course id: CSE 417
+    New course id: CSE 4107
+
+Old course id: CSE 231
+    New course id: CSE 2301
+
+Old course id: CSE 361
+    New course id: CSE 3601
+
+Old course id: CSE 457
+    New course id: CSE 4507
+
+Old course id: CSE 561
+    New course id: CSE 5610
+
+Old course id: CSE 240
+    New course id: CSE 2400
+
+Old course id: CSE 599
+    New course id: CSE 7998
+
+Old course id: CSE 802
+    New course id: CSE 8002
+
+Old course id: CSE 538
+    New course id: CSE 5308
+
+Old course id: CSE 428
+    New course id: CSE 4208
+
+Old course id: CSE 332
+    New course id: CSE 3302
+
+Old course id: CSE 801
+    New course id: CSE 8001
+
+Old course id: CSE 425
+    New course id: CSE 4205
+
+Old course id: CSE 330
+    New course id: CSE 3300
+
+Old course id: CSE 503
+    New course id: CSE 5306
+
+Old course id: CSE 570
+    New course id: CSE 5700
+
+Old course id: CSE 7005
+    New course id: CSE 7950
+
+Old course id: CSE 7001
+    New course id: CSE 7900
+
+Old course id: CSE 7100
+    New course id: CSE 7905
+
+Old course id: CSE 3050
+    New course id: CSE 3050
+
+Old course id: CSE 434
+    New course id: CSE 4304
+
+Old course id: CSE 131
+    New course id: CSE 1391
+
+Old course id: CSE 497
+    New course id: CSE 4970
+
+Old course id: CSE 498
+    New course id: CSE 4971
+
+Old course id: CSE 454
+    New course id: CSE 4504
+
+Old course id: CSE 437
+    New course id: CSE 4307
+
+Old course id: CSE 523
+    New course id: CSE 5203
+
+Old course id: CSE 431
+    New course id: CSE 4301
+
+Old course id: CSE 499
+    New course id: CSE 4975
+
+Old course id: CSE 450
+    New course id: CSE 4500
+
+Old course id: CSE 451
+    New course id: CSE 4501
+
+Old course id: CSE 204
+    New course id: CSE 2004
