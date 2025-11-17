@@ -64,7 +64,9 @@ def get_course_description(course_wrapper):
 
 def extract_prereqs_string(course_description):
     # pattern returns what comes after "Prerequisite" + (optional chars, like s) + ":"
-    pattern = r'Prerequisite[\w\s]*:\s*(.*)'
+    # ends string early at * character (if present) because that indicates "this class has mandatory evening exams"
+    # also ends string early if it contains "Revised:" (ex: "Revised: 2019-02-21")
+    pattern = r'Prerequisite[\w\s]*:\s*(.*?)(?:\*|Revised:|$)'
     match = re.search(pattern, course_description, re.IGNORECASE)
     if match:
         prereqs_string = match.group(1)
@@ -104,7 +106,6 @@ def main():
         department = get_course_department(course)
         description = get_course_description(course)
         prereq_string = extract_prereqs_string(description)
-        print()
 
         courses.append(
             CourseInfo(
@@ -120,8 +121,10 @@ def main():
         )
 
     for course in courses:
-        pprint.pprint(course)
-        print()
+        # pprint.pprint(course)
+        if (course.prereq_string):
+            print(f"Prereq String:   {course.prereq_string}")
+            print()
 
 
 
