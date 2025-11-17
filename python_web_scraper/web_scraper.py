@@ -94,7 +94,7 @@ def parse_prereqs_string(prereq_string):
     # matches 3-5 letter department code, an optional space, followed by 3-4 numbers (optional letter at end)
     # (covers things like CSE131, CSE 131, Math 310, Math 3200, CSE 361S)
     course_pattern = r'\b[A-Za-z]{3,5} ?\d{3,4}[A-Za-z]?\b'
-    course_prereq_list = re.findall(course_pattern, prereq_string)
+    course_prereq_list = re.findall(course_pattern, prereq_string) # TODO turn things like 'CSE247' into 'CSE 247'
     # covers junior/senior/graduate standing
     min_school_year_req = find_min_school_year_req(prereq_string)
     return course_prereq_list, min_school_year_req # TODO figure out how to deal with "and" vs "or" for what's required
@@ -157,7 +157,8 @@ def main():
         if (course.prereq_string):
             print(f"Prereq String:   {course.prereq_string}")
             print(f"         List:   {course.course_prereq_list}")
-            print(f" Min standing:   {course.min_school_year_req}")
+            if (course.min_school_year_req):
+                print(f" Min standing:   {course.min_school_year_req}")
             print()
 
 

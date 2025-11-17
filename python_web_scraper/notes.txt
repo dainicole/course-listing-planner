@@ -3,6 +3,14 @@ old websites:
     - https://bulletin.wustl.edu/undergrad/engineering/computerscience/#courses
     - https://bulletin.wustl.edu/grad/engineering/computerscience/#courses
 
+TODO Need to fix:
+    - consistent formatting for course list (ex: 'CSE 247' instead of 'CSE247')
+    - be mindful of 'and' vs 'or'           EX: "CSE 422S; or graduate standing"
+    - pay attention to coreq/concurrent classes
+    - deal with CSE 131/501 being the same class
+    - grab data from multiple semesters for full picture
+
+
 Keep in mind:
     - undergrad and grad diff numberings for same course
     - coreqs
