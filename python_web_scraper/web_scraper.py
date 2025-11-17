@@ -10,6 +10,7 @@ import pprint
 COURSE_WRAPPER_CLASS = "scpi__classes--row"
 NEW_COURSE_ID_CLASS = "scpi-class__heading middle" # ex: "CSE 3601" is the new version of "CSE 361"
 COURSE_TITLE_CLASS = "scpi-class__heading wide"
+COURSE_DEPARTMENT_CLASS = "scpi-class__department"
 COURSE_DESCRIPTION_CLASS = "scpi-class__details--content"
 
 # other constants
@@ -30,10 +31,8 @@ def get_old_course_id(course_wrapper):
     old_course_id_full = (str)(course_wrapper.get('data-course-id'))
     old_id_short = parse_course_id(old_course_id_full)
     if old_id_short:
-        # print(f"Old course id: {old_id_short}")
         return old_course_id_full, old_id_short, True # return true to show successful extraction
     else:
-        # print(f"Old course id (doesn't match format): {old_course_id_full}")
         return old_course_id_full, PLACEHOLDER, False # false to show failed to parse
 
 # helper function to find course info from div text
@@ -46,19 +45,21 @@ def extract_inner_html(course_wrapper, div_class):
 # get new course id from inner html
 def get_new_course_id(course_wrapper):
     new_id = extract_inner_html(course_wrapper, NEW_COURSE_ID_CLASS)
-    # print(f"    New course id: {new_id}")
     return new_id
 
 # get title from inner html
 def get_course_title(course_wrapper):
     title = extract_inner_html(course_wrapper, COURSE_TITLE_CLASS)
-    # print(f"    Course title: {title}")
     return title
     
+# get course department from inner html
+def get_course_department(course_wrapper):
+    department = extract_inner_html(course_wrapper, COURSE_DEPARTMENT_CLASS)
+    return department
+
 # get course description from inner html
 def get_course_description(course_wrapper):
     description = extract_inner_html(course_wrapper, COURSE_DESCRIPTION_CLASS)
-    # print(f"    Course description: {description}")
     return description
 
 def extract_prereqs_string(course_description):
@@ -67,7 +68,6 @@ def extract_prereqs_string(course_description):
     match = re.search(pattern, course_description, re.IGNORECASE)
     if match:
         prereqs_string = match.group(1)
-        # print(f'Prerequisite(s): {prereqs_string}')
         return prereqs_string
     else:
         return None     # no prereqs
@@ -75,13 +75,16 @@ def extract_prereqs_string(course_description):
 
 @dataclass
 class CourseInfo:
+    title: Optional[str]
+    department: Optional[str]
+    description: Optional[str]
+    prereq_string: Optional[str]
+    new_id: Optional[str]
     old_id_full: Optional[str]
     old_id_short: str
     old_id_valid: bool # sometimes html gives something unhelpful like COURSE_DEFINITION-3-61543
-    new_id: Optional[str]
-    title: Optional[str]
-    description: Optional[str]
-    prereq_string: Optional[str]
+    
+    
 
 
 
@@ -98,19 +101,21 @@ def main():
         old_id_full, old_id_short, old_id_valid = get_old_course_id(course)
         new_id = get_new_course_id(course)
         title = get_course_title(course)
+        department = get_course_department(course)
         description = get_course_description(course)
         prereq_string = extract_prereqs_string(description)
         print()
 
         courses.append(
             CourseInfo(
+                title = title,
+                department = department,
+                description = description,
+                prereq_string = prereq_string,
+                new_id = new_id,
                 old_id_full  = old_id_full,
                 old_id_short = old_id_short,
-                old_id_valid = old_id_valid,
-                new_id = new_id,
-                title = title,
-                description = description,
-                prereq_string = prereq_string
+                old_id_valid = old_id_valid
             )
         )
 
