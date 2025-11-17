@@ -73,6 +73,22 @@ def extract_prereqs_string(course_description):
         return prereqs_string
     else:
         return None     # no prereqs
+    
+# returns youngest eligible grade level (ex: if juniors and seniors can both take, return "JUNIOR")
+def find_min_school_year_req(prereq_string):
+    school_year_pattern = r'\b(junior|senior|graduate)\b'
+    matches = re.findall(school_year_pattern, prereq_string, re.IGNORECASE)
+    if not matches:
+        return None
+    
+    min_school_year_req_list = [m.upper() for m in matches] # make uppercase for consistency
+    
+    grade_levels = ["JUNIOR", "SENIOR", "GRADUATE"]
+
+    # return the youngest grade level that meets prereq requirement
+    for standing in grade_levels:
+        if standing in min_school_year_req_list:
+            return standing
         
 def parse_prereqs_string(prereq_string):
     # matches 3-5 letter department code, an optional space, followed by 3-4 numbers (optional letter at end)
@@ -80,20 +96,19 @@ def parse_prereqs_string(prereq_string):
     course_pattern = r'\b[A-Za-z]{3,5} ?\d{3,4}[A-Za-z]?\b'
     course_prereq_list = re.findall(course_pattern, prereq_string)
     # covers junior/senior/graduate standing
-    school_year_pattern = r'\b(junior|senior|graduate)\b'
-    school_year_req_list = re.findall(school_year_pattern, prereq_string, re.IGNORECASE)
-    school_year_req_list = [s.upper() for s in school_year_req_list] # make uppercase for consistency
-
-    return course_prereq_list, school_year_req_list # TODO figure out how to deal with "and" vs "or" for what's required
+    min_school_year_req = find_min_school_year_req(prereq_string)
+    return course_prereq_list, min_school_year_req # TODO figure out how to deal with "and" vs "or" for what's required
 
 
 @dataclass
 class CourseInfo:
     title: Optional[str]
+    new_id: Optional[str]
     department: Optional[str]
     description: Optional[str]
     prereq_string: Optional[str]
-    new_id: Optional[str]
+    course_prereq_list: Optional[list[str]]
+    min_school_year_req: Optional[str]
     old_id_full: Optional[str]
     old_id_short: str
     old_id_valid: bool # sometimes html gives something unhelpful like COURSE_DEFINITION-3-61543
@@ -118,14 +133,19 @@ def main():
         department = get_course_department(course)
         description = get_course_description(course)
         prereq_string = extract_prereqs_string(description)
+        if (prereq_string):
+            course_prereq_list, min_school_year_req = parse_prereqs_string(prereq_string)
+        
 
         courses.append(
             CourseInfo(
                 title = title,
+                new_id = new_id,
                 department = department,
                 description = description,
                 prereq_string = prereq_string,
-                new_id = new_id,
+                course_prereq_list = course_prereq_list, 
+                min_school_year_req = min_school_year_req,
                 old_id_full  = old_id_full,
                 old_id_short = old_id_short,
                 old_id_valid = old_id_valid
@@ -135,10 +155,9 @@ def main():
     for course in courses:
         # pprint.pprint(course)
         if (course.prereq_string):
-            course_prereq_list, school_year_req_list = parse_prereqs_string(course.prereq_string)
             print(f"Prereq String:   {course.prereq_string}")
-            print(f"       List:     {course_prereq_list}")
-            print(f"                 {school_year_req_list}")
+            print(f"         List:   {course.course_prereq_list}")
+            print(f" Min standing:   {course.min_school_year_req}")
             print()
 
 
