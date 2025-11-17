@@ -1,4 +1,12 @@
-website to get data from: https://registrar.washu.edu/classes-registration/class-schedule-search/
+new website to get data from: https://registrar.washu.edu/classes-registration/class-schedule-search/
+old websites: 
+    - https://bulletin.wustl.edu/undergrad/engineering/computerscience/#courses
+    - https://bulletin.wustl.edu/grad/engineering/computerscience/#courses
+
+Keep in mind:
+    - undergrad and grad diff numberings for same course
+    - coreqs
+
 
 
 initial output from SP26:
