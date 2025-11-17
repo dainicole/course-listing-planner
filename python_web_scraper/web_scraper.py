@@ -74,6 +74,18 @@ def extract_prereqs_string(course_description):
     else:
         return None     # no prereqs
         
+def parse_prereqs_string(prereq_string):
+    # matches 3-5 letter department code, an optional space, followed by 3-4 numbers (optional letter at end)
+    # (covers things like CSE131, CSE 131, Math 310, Math 3200, CSE 361S)
+    course_pattern = r'\b[A-Za-z]{3,5} ?\d{3,4}[A-Za-z]?\b'
+    course_prereq_list = re.findall(course_pattern, prereq_string)
+    # covers junior/senior/graduate standing
+    school_year_pattern = r'\b(junior|senior|graduate)\b'
+    school_year_req_list = re.findall(school_year_pattern, prereq_string, re.IGNORECASE)
+    school_year_req_list = [s.upper() for s in school_year_req_list] # make uppercase for consistency
+
+    return course_prereq_list, school_year_req_list # TODO figure out how to deal with "and" vs "or" for what's required
+
 
 @dataclass
 class CourseInfo:
@@ -123,7 +135,10 @@ def main():
     for course in courses:
         # pprint.pprint(course)
         if (course.prereq_string):
+            course_prereq_list, school_year_req_list = parse_prereqs_string(course.prereq_string)
             print(f"Prereq String:   {course.prereq_string}")
+            print(f"       List:     {course_prereq_list}")
+            print(f"                 {school_year_req_list}")
             print()
 
 
