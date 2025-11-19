@@ -28,7 +28,7 @@ export default async function Home() {
             <h2>{c.title}</h2>
             <p><strong>ID:</strong> {c.id}</p>
             <p><strong>Description:</strong> {c.description}</p>
-            <p><strong>Prereqs:</strong> {c.prereq_string || c.prereq}</p>
+            <p><strong>Prereqs:</strong> {c.prereqs}</p>
             <hr />
           </li>
         ))}

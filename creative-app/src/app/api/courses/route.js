@@ -8,7 +8,7 @@ export async function GET() {
     // Return all courses and their prereqs
     const result = await session.run(`
       MATCH (c:Course)
-      OPTIONAL MATCH (c)-[:HAS_COURSE]->(prereq:Course)
+      OPTIONAL MATCH (prereq:Course)-[:IS_REQUIRED_BY]->(c)
       RETURN c, collect(prereq.id) AS prereqs
     `);
 
@@ -19,7 +19,7 @@ export async function GET() {
         id: course.id,
         title: course.title,
         description: course.description,
-        prereqs: prereqs,
+        prereqs: prereqs.join(", "),
       };
     });
 

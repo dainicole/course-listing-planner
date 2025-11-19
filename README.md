@@ -8,6 +8,10 @@ Nicole Dai 522011 dainicole
 Project description: We're making a course planner for the CS department where you can easily see the prerequisites for different classes to help decide which classes you should prioritize taking earlier. For example, if you want to take CSE 417, it might have a prerequisite of matrix algebra, which itself needs calculus. Our website would display all of the prerequisites so you don't need to manually search for what each class is. You could also see what other CS courses a given class is a prerequisite for. For example, only after you've taken CSE 361 can you take CSE 422, which is itself a prerequisite for CSE 522, 532, and 542.
 
 
+Ideas for creative portion:
+- option to sort course list alphabetically or by course number
+
+
 
 <br><br><br><br><br><br><br><br><br>
 Rubric

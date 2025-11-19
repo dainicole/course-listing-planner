@@ -112,6 +112,8 @@ def establish_old_id_to_new_id_map(courses):
 
 def convert_prereq_list_old_id_to_new(prereq_list, old_to_new_id_map):
     prereq_list_new_ids = [old_to_new_id_map.get(old_id, None) for old_id in prereq_list]
+    prereq_list_new_ids = [item for item in prereq_list_new_ids if item is not None] # filter out "None" for database
+
     return prereq_list_new_ids
 
 
@@ -140,9 +142,10 @@ def upload_to_db(data):
             c.description = course.description,
             c.old_id_full = course.old_id_full,
             c.old_id_short = course.old_id_short,
+            c.old_id_valid = course.old_id_valid,
             c.min_year = course.min_school_year_req,
             c.prereq_string = course.prereq_string,
-            c.old_id_valid = course.old_id_valid
+            c.prereq_list = course.prereq_list_new_ids
 
         MERGE (d:Department {name: course.department})
 
