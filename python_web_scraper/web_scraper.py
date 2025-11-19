@@ -23,13 +23,13 @@ DATABASE_NAME = "CoursePrereqDB"
 # other constants
 PLACEHOLDER = "PLACEHOLDER" # for if there's not a valid short course id to parse
 
-# turns, for example, "CRS_CSE-E81_361S" into "CSE 361"
+# turns, for example, "CRS_CSE-E81_361S" into "CSE 361S"
 def parse_course_id(course_id):
-    match = re.search(r"CRS_([A-Z]+).*?_(\d+)", course_id)
+    match = re.search(r"CRS_([A-Z]+).*?_(\d{3,4}[A-Za-z]?)", course_id)
     if match:
         dept = match.group(1)
-        num = match.group(2)
-        return f"{dept} {num}"
+        code = match.group(2)
+        return f"{dept} {code}"
     else:
         return None
 
@@ -106,6 +106,15 @@ def parse_prereqs_string(prereq_string):
     min_school_year_req = find_min_school_year_req(prereq_string)
     return course_prereq_list, min_school_year_req # TODO figure out how to deal with "and" vs "or" for what's required
 
+def establish_old_id_to_new_id_map(courses):
+    old_to_new_id_map = {course.old_id_short: course.new_id for course in courses if course.old_id_valid} # TODO how to handle invalid old ids?
+    return old_to_new_id_map
+
+def convert_prereq_list_old_id_to_new(prereq_list, old_to_new_id_map):
+    prereq_list_new_ids = [old_to_new_id_map.get(old_id, None) for old_id in prereq_list]
+    return prereq_list_new_ids
+
+
 
 @dataclass
 class CourseInfo:
@@ -114,11 +123,12 @@ class CourseInfo:
     department: Optional[str]
     description: Optional[str]
     prereq_string: Optional[str]
-    course_prereq_list: Optional[list[str]]
+    course_prereq_list: Optional[list[str]] # has old IDs, like "CSE 361" or "CSE 361S"
     min_school_year_req: Optional[str]
     old_id_full: Optional[str]
     old_id_short: str
     old_id_valid: bool # sometimes html gives something unhelpful like COURSE_DEFINITION-3-61543
+    prereq_list_new_ids: Optional[list[str]] = None # will have new IDs, like "CSE 3601"
     
 # just making the individual nodes, will set up the prereq relationship later
 def upload_to_db(data):
@@ -154,14 +164,36 @@ def upload_to_db(data):
         print(f"Nodes created: {summary.counters.nodes_created}")
         print(f"Relationships created: {summary.counters.relationships_created}")
 
+# make prereq relationships
+def create_prerequisite_relationships(data):
+    CYPHER_PREREQ_QUERY = """
+        UNWIND $courseData AS course
+        UNWIND course.prereq_list_new_ids AS prereq_id 
+
+        MATCH (c:Course {id: course.new_id}) 
+        MATCH (p:Course {id: prereq_id})
+
+        MERGE (p)-[:IS_REQUIRED_BY]->(c)
+        """
+    with GraphDatabase.driver(URI, auth=AUTH) as driver:
+        # Execute the prerequisite query
+        summary = driver.execute_query(
+            CYPHER_PREREQ_QUERY,
+            courseData=data,
+            database_=DATABASE_NAME,
+        ).summary
+
+        print(f"Prerequisite relationships created: {summary.counters.relationships_created}")
+
 
 
 
 
 
 def main():
+    print("running code")
     # open html file (I downloaded the page for easier testing, will change later)
-    with open("C:/Users/Nicole/git/cse330/creative-project-module7-517938-522011/python_web_scraper/SP26_11.12.html", "r", encoding="utf-8") as f:
+    with open("C:/Users/aylab/cse330/creative_project/python_web_scraper/SP26_11.12.html", "r", encoding="utf-8") as f:
         html_content = f.read()
     soup = BeautifulSoup(html_content, 'html.parser')
     course_wrappers = soup.find_all('div', class_ = COURSE_WRAPPER_CLASS)
@@ -193,18 +225,35 @@ def main():
                 old_id_valid = old_id_valid
             )
         )
+    
+    print("finished scraping html")
+
+    # convert prereq list from old IDs to new (for database relationships)
+    old_to_new_id_map = establish_old_id_to_new_id_map(courses)
+    for course in courses:
+        if (course.course_prereq_list):
+            course.prereq_list_new_ids = convert_prereq_list_old_id_to_new(course.course_prereq_list, old_to_new_id_map)
+
+
 
     # for course in courses:
+    #     # print(f'Old ID: {course.old_id_short}')
+    #     # print(f'     NEW ID: {course.new_id}')
     #     # pprint.pprint(course)
     #     if (course.prereq_string):
-    #         print(f"Prereq String:   {course.prereq_string}")
-    #         print(f"         List:   {course.course_prereq_list}")
-    #         if (course.min_school_year_req):
-    #             print(f" Min standing:   {course.min_school_year_req}")
-    #         print()
+    #         #print(f"Prereq String:   {course.prereq_string}")
+    #         print(f"Prereq old IDs:   {course.course_prereq_list}")
+    #         print(f"Prereq new IDs:   {course.prereq_list_new_ids}")
+    #         # if (course.min_school_year_req):
+    #         #     print(f" Min standing:   {course.min_school_year_req}")
+    #     print()
 
     data_for_neo4j = [asdict(course) for course in courses]
+
+    # set up database
     upload_to_db(data_for_neo4j)
+    create_prerequisite_relationships(data_for_neo4j)
+
     print("DONE!")
 
 
