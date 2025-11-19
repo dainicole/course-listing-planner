@@ -1,9 +1,11 @@
 # TODO add bs4 into our download list           pip install beautifulsoup4
 from bs4 import BeautifulSoup
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Optional
 import pprint
+# TODO add this into download list too          pip install neo4j
+from neo4j import GraphDatabase
 
 # constants to look for in html (in case they get updated later)
 # note: "class" here refers to html class, I'm using "course" to refer to the thing students can enroll in
@@ -113,7 +115,45 @@ class CourseInfo:
     old_id_short: str
     old_id_valid: bool # sometimes html gives something unhelpful like COURSE_DEFINITION-3-61543
     
-    
+# just making the individual nodes, will set up the prereq relationship later
+def upload_to_db(data):
+    URI = "neo4j://localhost:7687"
+    AUTH = ("neo4j", "password") # TODO change if make other instance
+    DATABASE_NAME = "testcourses"
+    CYPHER_IMPORT_QUERY = """
+        UNWIND $courseData AS course
+        MERGE (c:Course {id: course.new_id})
+        SET 
+            c.title = course.title,
+            c.description = course.description,
+            c.old_id_full = course.old_id_full,
+            c.old_id_short = course.old_id_short,
+            c.min_year = course.min_school_year_req,
+            c.prereq_string = course.prereq_string,
+            c.old_id_valid = course.old_id_valid
+
+        MERGE (d:Department {name: course.department})
+
+        MERGE (d)-[:HAS_COURSE]->(c)
+
+        RETURN c.id
+        """
+
+    with GraphDatabase.driver(URI, auth=AUTH) as driver:
+        driver.verify_connectivity()
+        print("Connected to Neo4j successfully!")
+
+        summary = driver.execute_query(
+            CYPHER_IMPORT_QUERY,
+            courseData=data, 
+            database_=DATABASE_NAME,
+        ).summary
+
+        print(f"Nodes created: {summary.counters.nodes_created}")
+        print(f"Relationships created: {summary.counters.relationships_created}")
+
+
+
 
 
 
@@ -152,14 +192,23 @@ def main():
             )
         )
 
-    for course in courses:
-        # pprint.pprint(course)
-        if (course.prereq_string):
-            print(f"Prereq String:   {course.prereq_string}")
-            print(f"         List:   {course.course_prereq_list}")
-            if (course.min_school_year_req):
-                print(f" Min standing:   {course.min_school_year_req}")
-            print()
+    # for course in courses:
+    #     # pprint.pprint(course)
+    #     if (course.prereq_string):
+    #         print(f"Prereq String:   {course.prereq_string}")
+    #         print(f"         List:   {course.course_prereq_list}")
+    #         if (course.min_school_year_req):
+    #             print(f" Min standing:   {course.min_school_year_req}")
+    #         print()
+
+    data_for_neo4j = [asdict(course) for course in courses]
+
+    URI = "neo4j://localhost:7687"
+    AUTH = ("neo4j", "password")
+    DATABASE_NAME = "testcourses"
+    upload_to_db(data_for_neo4j)
+
+    print("DONE!")
 
 
 
