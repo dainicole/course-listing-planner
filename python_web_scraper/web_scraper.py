@@ -212,7 +212,10 @@ def main():
         prereq_string = extract_prereqs_string(description)
         if (prereq_string):
             course_prereq_list, min_school_year_req = parse_prereqs_string(prereq_string)
-        
+        else:
+            # make sure ghost prereqs aren't created
+            course_prereq_list = None
+            min_school_year_req = None
 
         courses.append(
             CourseInfo(
@@ -243,10 +246,10 @@ def main():
     #     # print(f'Old ID: {course.old_id_short}')
     #     # print(f'     NEW ID: {course.new_id}')
     #     # pprint.pprint(course)
-    #     if (course.prereq_string):
-    #         #print(f"Prereq String:   {course.prereq_string}")
-    #         print(f"Prereq old IDs:   {course.course_prereq_list}")
-    #         print(f"Prereq new IDs:   {course.prereq_list_new_ids}")
+    #     if (not(course.prereq_string)):
+    #         print(f"Prereq String:   {course.prereq_string}")
+    #         print(f"     Prereq old IDs:   {course.course_prereq_list}")
+    #         print(f"     Prereq new IDs:   {course.prereq_list_new_ids}")
     #         # if (course.min_school_year_req):
     #         #     print(f" Min standing:   {course.min_school_year_req}")
     #     print()
