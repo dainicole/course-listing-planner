@@ -15,6 +15,11 @@ COURSE_TITLE_CLASS = "scpi-class__heading wide"
 COURSE_DEPARTMENT_CLASS = "scpi-class__department"
 COURSE_DESCRIPTION_CLASS = "scpi-class__details--content"
 
+#constants for database
+URI = "neo4j://localhost:7687"
+AUTH = ("neo4j", "12345678") # TODO change if make other instance
+DATABASE_NAME = "CoursePrereqDB"
+
 # other constants
 PLACEHOLDER = "PLACEHOLDER" # for if there's not a valid short course id to parse
 
@@ -117,9 +122,6 @@ class CourseInfo:
     
 # just making the individual nodes, will set up the prereq relationship later
 def upload_to_db(data):
-    URI = "neo4j://localhost:7687"
-    AUTH = ("neo4j", "password") # TODO change if make other instance
-    DATABASE_NAME = "testcourses"
     CYPHER_IMPORT_QUERY = """
         UNWIND $courseData AS course
         MERGE (c:Course {id: course.new_id})
@@ -159,7 +161,7 @@ def upload_to_db(data):
 
 def main():
     # open html file (I downloaded the page for easier testing, will change later)
-    with open("creative_project/python_web_scraper/SP26_11.12.html", "r", encoding="utf-8") as f:
+    with open("C:/Users/Nicole/git/cse330/creative-project-module7-517938-522011/python_web_scraper/SP26_11.12.html", "r", encoding="utf-8") as f:
         html_content = f.read()
     soup = BeautifulSoup(html_content, 'html.parser')
     course_wrappers = soup.find_all('div', class_ = COURSE_WRAPPER_CLASS)
@@ -202,18 +204,8 @@ def main():
     #         print()
 
     data_for_neo4j = [asdict(course) for course in courses]
-
-    URI = "neo4j://localhost:7687"
-    AUTH = ("neo4j", "password")
-    DATABASE_NAME = "testcourses"
     upload_to_db(data_for_neo4j)
-
     print("DONE!")
-
-
-
-
-
 
 
 if __name__ == "__main__":
