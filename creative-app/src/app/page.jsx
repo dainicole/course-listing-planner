@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
+import CourseCard from "./CourseCard";
 
 async function fetchCourses() {
   const res = await fetch("/api/courses", { cache: "no-store" });
@@ -57,12 +58,7 @@ export default function Home() {
 
       <ul className={styles.courseList}>
         {sortedCourses.map((c) => (
-          <li key={c.id} className={styles.courseCard}>
-            <h2 className={styles.courseTitle}>{c.title}</h2>
-            <p><strong>ID:</strong> {c.id}</p>
-            <p><strong>Description:</strong> {c.description}</p>
-            <p><strong>Prereqs:</strong> {c.prereqs}</p>
-          </li>
+          <CourseCard key={c.id} c={c} />
         ))}
       </ul>
     </main>
