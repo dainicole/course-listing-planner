@@ -1,35 +1,67 @@
-async function getCourses() {
-  const res = await fetch("http://localhost:3000/api/courses", {
-    cache: "no-store"   // ensures always fetches updated data
-  });
+"use client";
 
-  if (!res.ok) {
-    console.error("Failed to fetch courses");
-    return [];
-  }
+import { useEffect, useState } from "react";
+import styles from "./page.module.css";
 
+async function fetchCourses() {
+  const res = await fetch("/api/courses", { cache: "no-store" });
+  if (!res.ok) return [];
   return res.json();
 }
 
-export default async function Home() {
-  const courses = await getCourses();
+export default function Home() {
+  const [courses, setCourses] = useState([]);
+  const [sortField, setSortField] = useState("title");
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  useEffect(() => {
+    fetchCourses().then(setCourses);
+  }, []);
+
+  const sortedCourses = [...courses].sort((a, b) => {
+    let x = a[sortField] || "";
+    let y = b[sortField] || "";
+
+    if (x < y) return sortOrder === "asc" ? -1 : 1;
+    if (x > y) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
 
   return (
-    <main style={{ padding: "2rem" }}>
-      <h1>Course List</h1>
+    <main className={styles.main}>
+      <h1 className={styles.header}>Course List</h1>
 
-      {courses.length === 0 && (
-        <p>No courses found.</p>
+      <div className={styles.filterBar}>
+        <select
+          value={sortField}
+          onChange={(e) => setSortField(e.target.value)}
+          className={styles.select}
+        >
+          <option value="title">Sort by Course Name (A–Z)</option>
+          <option value="id">Sort by Course Number</option>
+        </select>
+
+        <button
+          onClick={() =>
+            setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+          }
+          className={styles.button}
+        >
+          {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
+        </button>
+      </div>
+
+      {sortedCourses.length === 0 && (
+        <p className={styles.noCourses}>No courses found.</p>
       )}
 
-      <ul style={{ marginTop: "1rem" }}>
-        {courses.map((c: any) => (
-          <li key={c.id} style={{ marginBottom: "1rem" }}>
-            <h2>{c.title}</h2>
+      <ul className={styles.courseList}>
+        {sortedCourses.map((c) => (
+          <li key={c.id} className={styles.courseCard}>
+            <h2 className={styles.courseTitle}>{c.title}</h2>
             <p><strong>ID:</strong> {c.id}</p>
             <p><strong>Description:</strong> {c.description}</p>
             <p><strong>Prereqs:</strong> {c.prereqs}</p>
-            <hr />
           </li>
         ))}
       </ul>
