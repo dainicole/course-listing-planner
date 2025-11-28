@@ -21,6 +21,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState("list");
   const [takenCourses, setTakenCourses] = useState(new Set());
   const [filterMode, setFilterMode] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchCourses().then(setCourses);
@@ -55,10 +56,17 @@ export default function Home() {
     return 0;
   });
 
-  //filter courses based on taken status
+  //filter courses based on taken status or search bar
   const filteredCourses = sortedCourses.filter((c) => {
-    if (filterMode === "taken") return takenCourses.has(c.id);
-    if (filterMode === "not-taken") return !takenCourses.has(c.id);
+    if (filterMode === "taken" && !takenCourses.has(c.id)) return false;
+    if (filterMode === "not-taken" && takenCourses.has(c.id)) return false;
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchesTitle = c.title?.toLowerCase().includes(query);
+      const matchesId = c.id?.toLowerCase().includes(query);
+      return matchesTitle || matchesId;
+    }
+    
     return true;
   });
 
@@ -94,32 +102,43 @@ export default function Home() {
           <h2>Course List</h2>
 
           <div className={styles.filterBar}>
-            <select
-              value={sortField}
-              onChange={(e) => setSortField(e.target.value)}
-              className={styles.select}
-            >
-              <option value="title">Sort by Course Name (A-Z)</option>
-              <option value="id">Sort by Course Number</option>
-            </select>
+            <div className={styles.leftControls}>
+              <select
+                value={sortField}
+                onChange={(e) => setSortField(e.target.value)}
+                className={styles.select}
+              >
+                <option value="title">Sort by Course Name (A-Z)</option>
+                <option value="id">Sort by Course Number</option>
+              </select>
 
-            <button
-              onClick={() =>
-                setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
-              }
-              className={styles.button}
-            >
-              {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
-            </button>
-            <select
-              value={filterMode}
-              onChange={(e) => setFilterMode(e.target.value)}
-              className={styles.select}
-            >
-              <option value="all">All Courses</option>
-              <option value="taken">Taken Courses</option>
-              <option value="not-taken">Not Taken Courses</option>
-            </select>
+              <button
+                onClick={() =>
+                  setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+                }
+                className={styles.button}
+              >
+                {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
+              </button>
+              
+              <select
+                value={filterMode}
+                onChange={(e) => setFilterMode(e.target.value)}
+                className={styles.select}
+              >
+                <option value="all">All Courses</option>
+                <option value="taken">Taken Courses</option>
+                <option value="not-taken">Not Taken Courses</option>
+              </select>
+            </div>
+
+            <input
+              type="text"
+              placeholder="Search by course title or number..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={styles.searchInput}
+            />
           </div>
 
           {filteredCourses.length === 0 && (

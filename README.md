@@ -10,6 +10,8 @@ Project description: We're making a course planner for the CS department where y
 
 Ideas for creative portion:
 - option to sort course list alphabetically or by course number
+- option to filter by taken/not taken courses
+- option to search for specific course by course title or course name
 
 
 
