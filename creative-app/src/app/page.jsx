@@ -18,6 +18,7 @@ export default function Home() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [prereqTree, setPrereqTree] = useState([]);
   const [postreqTree, setPostreqTree] = useState([]);
+  const [viewMode, setViewMode] = useState("list");
 
   useEffect(() => {
     fetchCourses().then(setCourses);
@@ -25,12 +26,12 @@ export default function Home() {
 
   // make sure courses fetched before doing trees
   useEffect(() => {
-  if (courses.length > 0) {
-    setPrereqTree(buildPrereqTree(courses));
-    setPostreqTree(buildPostreqTree(courses));
-  }
-}, [courses]);
-
+    if (courses.length > 0) {
+      setPrereqTree(buildPrereqTree(courses));
+      setPostreqTree(buildPostreqTree(courses));
+    }
+  }, [courses]);
+  
 
   const sortedCourses = [...courses].sort((a, b) => {
     let x = a[sortField] || "";
@@ -43,43 +44,66 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <h1>Prerequisite Tree</h1>
-      <CourseTree treeData={prereqTree} />
+      <h1 className={styles.header}>Course Viewer</h1>
 
-      <h1>Postrequisite Tree</h1>
-      <CourseTree treeData={postreqTree} />
-
-      <h1 className={styles.header}>Course List</h1>
-
-      <div className={styles.filterBar}>
-        <select
-          value={sortField}
-          onChange={(e) => setSortField(e.target.value)}
-          className={styles.select}
-        >
-          <option value="title">Sort by Course Name (A-Z)</option>
-          <option value="id">Sort by Course Number</option>
-        </select>
-
+      {/* toggle buttons between list or graph */}
+      <div className={styles.viewToggle}>
         <button
-          onClick={() =>
-            setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
-          }
-          className={styles.button}
-        >
-          {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
+          onClick={() => setViewMode("list")}
+          className={`${styles.button} ${viewMode === "list" ? styles.activeButton : ""}`}
+        >List View
+        </button>
+        <button
+          onClick={() => setViewMode("graph")}
+          className={`${styles.button} ${viewMode === "graph" ? styles.activeButton : ""}`}
+        >Graph View
         </button>
       </div>
+      
+      {/* show graph/list based on chosen view mode */}
+      {viewMode === "graph" ? (
+        <>
+          <h2>Prerequisite Tree</h2>
+          <CourseTree treeData={prereqTree} />
 
-      {sortedCourses.length === 0 && (
-        <p className={styles.noCourses}>No courses found.</p>
+          <h2>Postrequisite Tree</h2>
+          <CourseTree treeData={postreqTree} />
+        </>
+      ) : (
+        <>
+          <h2>Course List</h2>
+
+          <div className={styles.filterBar}>
+            <select
+              value={sortField}
+              onChange={(e) => setSortField(e.target.value)}
+              className={styles.select}
+            >
+              <option value="title">Sort by Course Name (A-Z)</option>
+              <option value="id">Sort by Course Number</option>
+            </select>
+
+            <button
+              onClick={() =>
+                setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+              }
+              className={styles.button}
+            >
+              {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
+            </button>
+          </div>
+
+          {sortedCourses.length === 0 && (
+            <p className={styles.noCourses}>No courses found.</p>
+          )}
+
+          <ul className={styles.courseList}>
+            {sortedCourses.map((c) => (
+              <CourseCard key={c.id} c={c} />
+            ))}
+          </ul>
+        </>
       )}
-
-      <ul className={styles.courseList}>
-        {sortedCourses.map((c) => (
-          <CourseCard key={c.id} c={c} />
-        ))}
-      </ul>
     </main>
   );
 }
