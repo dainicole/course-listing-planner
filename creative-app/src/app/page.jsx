@@ -19,6 +19,8 @@ export default function Home() {
   const [prereqTree, setPrereqTree] = useState([]);
   const [postreqTree, setPostreqTree] = useState([]);
   const [viewMode, setViewMode] = useState("list");
+  const [takenCourses, setTakenCourses] = useState(new Set());
+  const [filterMode, setFilterMode] = useState("all");
 
   useEffect(() => {
     fetchCourses().then(setCourses);
@@ -32,6 +34,17 @@ export default function Home() {
     }
   }, [courses]);
   
+  const toggleCourseTaken = (courseId) => {
+    setTakenCourses(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(courseId)) {
+        newSet.delete(courseId);
+      } else {
+        newSet.add(courseId);
+      }
+      return newSet;
+    });
+  };
 
   const sortedCourses = [...courses].sort((a, b) => {
     let x = a[sortField] || "";
@@ -40,6 +53,13 @@ export default function Home() {
     if (x < y) return sortOrder === "asc" ? -1 : 1;
     if (x > y) return sortOrder === "asc" ? 1 : -1;
     return 0;
+  });
+
+  //filter courses based on taken status
+  const filteredCourses = sortedCourses.filter((c) => {
+    if (filterMode === "taken") return takenCourses.has(c.id);
+    if (filterMode === "not-taken") return !takenCourses.has(c.id);
+    return true;
   });
 
   return (
@@ -91,15 +111,29 @@ export default function Home() {
             >
               {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
             </button>
+            <select
+              value={filterMode}
+              onChange={(e) => setFilterMode(e.target.value)}
+              className={styles.select}
+            >
+              <option value="all">All Courses</option>
+              <option value="taken">Taken Courses</option>
+              <option value="not-taken">Not Taken Courses</option>
+            </select>
           </div>
 
-          {sortedCourses.length === 0 && (
+          {filteredCourses.length === 0 && (
             <p className={styles.noCourses}>No courses found.</p>
           )}
 
           <ul className={styles.courseList}>
-            {sortedCourses.map((c) => (
-              <CourseCard key={c.id} c={c} />
+            {filteredCourses.map((c) => (
+              <CourseCard 
+                key={c.id} 
+                c={c} 
+                isTaken={takenCourses.has(c.id)}
+                onToggleTaken={toggleCourseTaken}
+              />
             ))}
           </ul>
         </>
