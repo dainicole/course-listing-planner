@@ -15,8 +15,8 @@ export default function CourseCard({ c, isTaken, onToggleTaken }) {
   const [postreqTree, setPostreqTree] = useState([]);
 
   useEffect(() => {
-    setPrereqTree(buildPrereqTree(allCourses)); // TODO: update these to be course specific
-    setPostreqTree(buildPostreqTree(allCourses));
+    setPrereqTree(buildPrereqTree(allCourses, c.id));
+    setPostreqTree(buildPostreqTree(allCourses, c.id));
   }, [allCourses, c.id]);
   
 
