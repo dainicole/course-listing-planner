@@ -20,6 +20,7 @@ export async function GET() {
       const graphed_prereqs = r.get("graphed_prereqs") || [];
       const graphed_postreqs = r.get("graphed_postreqs") || [];
 
+      // NOTE: if this 'return' is updated, need to update "const [courses, setCourses]" in Home()
       return {
         id: props.id,
         title: props.title || props.name || "Untitled Course",

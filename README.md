@@ -12,6 +12,11 @@ Ideas for creative portion:
 - option to sort course list alphabetically or by course number
 - option to filter by taken/not taken courses
 - option to search for specific course by course title or course name
+- show history for which classes you've done prereq/postreq trees for (easy click back to them)
+- workday integration?
+- history of when each class was offered?
+- ability to add courses to a comparison list (save to look at later)
+- can open courses in new tab?
 
 
 

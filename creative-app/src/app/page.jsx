@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import styles from "./page.module.css";
 import CourseCard from "./CourseCard";
-import CourseTree from "./view_tree/renderTree.jsx"
-import { buildPrereqTree, buildPostreqTree } from "./view_tree/buildTree.js"
+import CourseTree from "./view_tree/renderTree.jsx";
+// TODO implement this:
+// import { buildFullTree } from "./view_tree/buildTree.js";
+
+// need to export this outside of home function so other files can see it
+export const CourseContext = createContext(null);
 
 async function fetchCourses() {
   const res = await fetch("/api/courses", { cache: "no-store" });
@@ -13,11 +17,20 @@ async function fetchCourses() {
 }
 
 export default function Home() {
-  const [courses, setCourses] = useState([]);
+  // giving vscode an example of what the type looks like so it doesn't show as "never[]"
+  // note: this format needs to match what's returned from the api call
+  const [courses, setCourses] = useState([{
+    id: "",
+    title: "",
+    description: "",
+    prereqs: "",
+    prereq_list: [""],
+    postreq_list: [""]
+  }]);
   const [sortField, setSortField] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
-  const [prereqTree, setPrereqTree] = useState([]);
-  const [postreqTree, setPostreqTree] = useState([]);
+  // TODO: add this function for making tree with all possible courses shown
+  const [fullCourseTree, setFullCourseTree] = useState([]);
   const [viewMode, setViewMode] = useState("list");
   const [takenCourses, setTakenCourses] = useState(new Set());
   const [filterMode, setFilterMode] = useState("all");
@@ -28,12 +41,12 @@ export default function Home() {
   }, []);
 
   // make sure courses fetched before doing trees
-  useEffect(() => {
-    if (courses.length > 0) {
-      setPrereqTree(buildPrereqTree(courses));
-      setPostreqTree(buildPostreqTree(courses));
-    }
-  }, [courses]);
+  // TODO: implement this
+  // useEffect(() => {
+  //   if (courses.length > 0) {
+  //     setFullCourseTree(buildFullTree(courses));
+  //   }
+  // }, [courses]);
   
   const toggleCourseTaken = (courseId) => {
     setTakenCourses(prev => {
@@ -71,92 +84,95 @@ export default function Home() {
   });
 
   return (
-    <main className={styles.main}>
-      <h1 className={styles.header}>Course Viewer</h1>
+    <CourseContext.Provider value={courses}>
+      <main className={styles.main}>
+        <h1 className={styles.header}>Course Viewer</h1>
 
-      {/* toggle buttons between list or graph */}
-      <div className={styles.viewToggle}>
-        <button
-          onClick={() => setViewMode("list")}
-          className={`${styles.button} ${viewMode === "list" ? styles.activeButton : ""}`}
-        >List View
-        </button>
-        <button
-          onClick={() => setViewMode("graph")}
-          className={`${styles.button} ${viewMode === "graph" ? styles.activeButton : ""}`}
-        >Graph View
-        </button>
-      </div>
-      
-      {/* show graph/list based on chosen view mode */}
-      {viewMode === "graph" ? (
-        <>
-          <h2>Prerequisite Tree</h2>
-          <CourseTree treeData={prereqTree} />
+        {/* toggle buttons between list or graph */}
+        <div className={styles.viewToggle}>
+          <button
+            onClick={() => setViewMode("list")}
+            className={`${styles.button} ${viewMode === "list" ? styles.activeButton : ""}`}
+          >List View
+          </button>
+          <button
+            onClick={() => setViewMode("graph")}
+            className={`${styles.button} ${viewMode === "graph" ? styles.activeButton : ""}`}
+          >Graph View
+          </button>
+        </div>
+        
+        {/* show graph/list based on chosen view mode */}
+        {viewMode === "graph" ? (
+          <>
+            <h2>Full Course Prereq/Postreq Tree</h2>
+            <p>
+              TODO: implement this
+            </p>
+            {/* TODO: implement this */}
+            {/* <CourseTree treeData={fullCourseTree} /> */}
+          </>
+        ) : (
+          <>
+            <h2>Course List</h2>
 
-          <h2>Postrequisite Tree</h2>
-          <CourseTree treeData={postreqTree} />
-        </>
-      ) : (
-        <>
-          <h2>Course List</h2>
+            <div className={styles.filterBar}>
+              <div className={styles.leftControls}>
+                <select
+                  value={sortField}
+                  onChange={(e) => setSortField(e.target.value)}
+                  className={styles.select}
+                >
+                  <option value="title">Sort by Course Name (A-Z)</option>
+                  <option value="id">Sort by Course Number</option>
+                </select>
 
-          <div className={styles.filterBar}>
-            <div className={styles.leftControls}>
-              <select
-                value={sortField}
-                onChange={(e) => setSortField(e.target.value)}
-                className={styles.select}
-              >
-                <option value="title">Sort by Course Name (A-Z)</option>
-                <option value="id">Sort by Course Number</option>
-              </select>
+                <button
+                  onClick={() =>
+                    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+                  }
+                  className={styles.button}
+                >
+                  {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
+                </button>
+                
+                <select
+                  value={filterMode}
+                  onChange={(e) => setFilterMode(e.target.value)}
+                  className={styles.select}
+                >
+                  <option value="all">All Courses</option>
+                  <option value="taken">Taken Courses</option>
+                  <option value="not-taken">Not Taken Courses</option>
+                </select>
+              </div>
 
-              <button
-                onClick={() =>
-                  setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
-                }
-                className={styles.button}
-              >
-                {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
-              </button>
-              
-              <select
-                value={filterMode}
-                onChange={(e) => setFilterMode(e.target.value)}
-                className={styles.select}
-              >
-                <option value="all">All Courses</option>
-                <option value="taken">Taken Courses</option>
-                <option value="not-taken">Not Taken Courses</option>
-              </select>
+              <input
+                type="text"
+                placeholder="Search by course title or number..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={styles.searchInput}
+              />
             </div>
 
-            <input
-              type="text"
-              placeholder="Search by course title or number..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.searchInput}
-            />
-          </div>
+            {filteredCourses.length === 0 && (
+              <p className={styles.noCourses}>No courses found.</p>
+            )}
 
-          {filteredCourses.length === 0 && (
-            <p className={styles.noCourses}>No courses found.</p>
-          )}
-
-          <ul className={styles.courseList}>
-            {filteredCourses.map((c) => (
-              <CourseCard 
-                key={c.id} 
-                c={c} 
-                isTaken={takenCourses.has(c.id)}
-                onToggleTaken={toggleCourseTaken}
-              />
-            ))}
-          </ul>
-        </>
-      )}
-    </main>
+            <ul className={styles.courseList}>
+              {filteredCourses.map((c) => (
+                <CourseCard 
+                  key={c.id} 
+                  c={c} 
+                  isTaken={takenCourses.has(c.id)}
+                  onToggleTaken={toggleCourseTaken}
+                />
+              ))}
+            </ul>
+          </>
+        )}
+      </main>
+    </CourseContext.Provider>
   );
 }
