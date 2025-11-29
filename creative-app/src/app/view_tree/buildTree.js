@@ -1,9 +1,9 @@
 export function buildPrereqTree(allCourses, rootCourseId) {
-	return buildTreeFromRoot(allCourses, "prereq_list", true, rootCourseId);
+	return buildTreeFromRoot(allCourses, "prereq_list", rootCourseId);
 }
 
 export function buildPostreqTree(allCourses, rootCourseId) {
-	return buildTreeFromRoot(allCourses, "postreq_list", false, rootCourseId);
+	return buildTreeFromRoot(allCourses, "postreq_list", rootCourseId);
 }
 
 // TODO finish fixing this to return multiple trees
@@ -36,14 +36,12 @@ export function buildPostreqTree(allCourses, rootCourseId) {
 // 	return buildTreeFromRoot(allCourses, "postreq_list", false, "CSE 1301");
 // }
 
-function buildTreeFromRoot(allCourses, relationField, isPrereqTree = true,
-						   rootCourseId, map = null, childIds = null) 
+function buildTreeFromRoot(allCourses, relationField, rootCourseId, map = null) 
 {
-	// conditional so buildFullTree doesn't remap all courses repeatedly
-	if (!map || !childIds) {
+	// conditional so buildFullTree won't remap all courses repeatedly
+	if (!map) {
 		map = new Map();
-		childIds = new Set();
-		establishCourseMap(allCourses, relationField, isPrereqTree, map, childIds);
+		establishCourseMap(allCourses, relationField, map);
 	}
 
 	// get the root course from within the map
@@ -58,7 +56,7 @@ function buildTreeFromRoot(allCourses, relationField, isPrereqTree = true,
 	return toD3Format(rootNode);
 }
 
-function establishCourseMap(allCourses, relationField, isPrereqTree = true, map, childIds) {
+function establishCourseMap(allCourses, relationField, map) {
 	// map all courses by id, initialize children array
 	allCourses.forEach(course => {
 		map.set(course.id, { ...course, children: [] });
@@ -66,15 +64,18 @@ function establishCourseMap(allCourses, relationField, isPrereqTree = true, map,
 
 	// fill children array
 	allCourses.forEach(course => {
-		(course[relationField] || []).forEach(relId => {
-			const parentNode = isPrereqTree ? map.get(relId) : map.get(course.id);
-			const childNode = isPrereqTree ? map.get(course.id) : map.get(relId);
+		const childIds = course[relationField] || [];
+		for (const childId of childIds) {
+			const childNode = map.get(childId);
+			const thisNode = map.get(course.id);
 
-			if (parentNode && childNode) {
-				parentNode.children.push(childNode);
-				childIds.add(childNode.id);
+			if (!childNode || !thisNode) {
+				continue;
 			}
-		});
+
+			// course -> pre/postreq
+			thisNode.children.push(childNode);
+		}
 	});
 }
 
