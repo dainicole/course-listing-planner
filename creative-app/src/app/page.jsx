@@ -34,6 +34,7 @@ export default function Home() {
   const [takenCourses, setTakenCourses] = useState(new Set());
   const [filterMode, setFilterMode] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [wantedCourses, setWantedCourses] = useState(new Set());
 
   useEffect(() => {
     fetchCourses().then(setCourses);
@@ -56,6 +57,19 @@ export default function Home() {
     });
   };
 
+  const toggleCourseWanted = (courseId) => {
+  setWantedCourses(prev => {
+    const newSet = new Set(prev);
+    if (newSet.has(courseId)) {
+      newSet.delete(courseId);
+    } else {
+      newSet.add(courseId);
+    }
+    return newSet;
+  });
+  };
+
+
   const sortedCourses = [...courses].sort((a, b) => {
     let x = a[sortField] || "";
     let y = b[sortField] || "";
@@ -67,8 +81,10 @@ export default function Home() {
 
   //filter courses based on taken status or search bar
   const filteredCourses = sortedCourses.filter((c) => {
-    if (filterMode === "taken" && !takenCourses.has(c.id)) return false;
-    if (filterMode === "not-taken" && takenCourses.has(c.id)) return false;
+  if (filterMode === "taken" && !takenCourses.has(c.id)) return false;
+  if (filterMode === "not-taken" && takenCourses.has(c.id)) return false;
+  if (filterMode === "wanted" && !wantedCourses.has(c.id)) return false;
+  if (filterMode === "not-wanted" && wantedCourses.has(c.id)) return false;
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       const matchesTitle = c.title?.toLowerCase().includes(query);
@@ -138,6 +154,8 @@ export default function Home() {
                   <option value="all">All Courses</option>
                   <option value="taken">Taken Courses</option>
                   <option value="not-taken">Not Taken Courses</option>
+                  <option value="wanted">Want to Take Courses</option>
+                  <option value="not-wanted">Not Wanted Courses</option>
                 </select>
               </div>
 
@@ -160,7 +178,9 @@ export default function Home() {
                   key={c.id} 
                   c={c} 
                   isTaken={takenCourses.has(c.id)}
+                  isWanted={wantedCourses.has(c.id)}
                   onToggleTaken={toggleCourseTaken}
+                  onToggleWanted={toggleCourseWanted}
                 />
               ))}
             </ul>

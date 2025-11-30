@@ -32,9 +32,14 @@
   flex-wrap: wrap;
 }
 
-.searchInput {
+.searchInput,
+.select,
+.button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
+}
+
+.searchInput {
   border: 2px solid #ddd;
   border-radius: 4px;
   min-width: 300px;
@@ -46,19 +51,12 @@
   border-color: #007bff;
 }
 
-.select {
-  padding: 0.5rem;
-  font-size: 1rem;
-}
-
 .button {
-  padding: 0.5rem 1rem;
   cursor: pointer;
-  font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 2px;
   background: white;
-  transition: all 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .button:hover {
@@ -69,16 +67,6 @@
   background: #007bff;
   color: white;
   border-color: #007bff;
-}
-
-.activeButton:hover {
-  background: #0056b3;
-  border-color: #0056b3;
-}
-
-.noCourses {
-  color: #888;
-  font-style: italic;
 }
 
 .courseList {
@@ -99,30 +87,26 @@
   background: #f0f0f0;
 }
 
-.takenCourse {
-  background: #e8f5e9;
-  border-color: #4caf50;
+.wantedCourse {
+  background: #ffebee !important;
+  border-color: #e57373;
   border-width: 2px;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(229, 115, 115, 0.2);
 }
 
-.takenCourse:hover {
-  background: #c8e6c9;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+.wantedCourse .courseTitle {
+  color: #c62828;
+}
+
+.takenCourse {
+  background: #e8f5e9 !important;
+  border-color: #4caf50 !important;
+  border-width: 2px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
 }
 
 .takenCourse .courseTitle {
-  color: #2e7d32;
-}
-
-.courseHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  color: #2e7d32 !important;
 }
 
 .checkboxContainer {
@@ -134,32 +118,45 @@
   border: 2px solid #ddd;
   border-radius: 2px;
   transition: all 0.3s ease;
-  flex-shrink: 0;
 }
 
-.checkboxContainer:hover {
-  border-color: #4caf50;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
-}
-
-.checkbox {
+.checkboxTaken,
+.checkboxWanted {
   width: 20px;
   height: 20px;
   cursor: pointer;
+}
+
+.checkboxTaken {
   accent-color: #4caf50;
+}
+
+.checkboxWanted {
+  accent-color: #ff5252;
 }
 
 .checkboxLabel {
   cursor: pointer;
   font-size: 0.9rem;
   color: #666;
-  user-select: none;
   font-weight: 500;
+}
+
+.checkboxGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+}
+
+.courseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .courseTitle {
   font-size: 1.3rem;
-  margin-bottom: 0.5rem;
 }
 
 .courseDescription {
