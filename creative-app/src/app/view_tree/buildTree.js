@@ -40,6 +40,23 @@ export function buildDagForRoot(allCourses, relationField, rootId) {
     return dagData;
 }
 
+export function buildDagForAllCourses(allCourses, relationField = "postreq_list") {
+    const courseMap = new Map();
+    establishCourseMap(allCourses, relationField, courseMap);
+
+    // convert all courses to d3-dag format
+    const dagData = [];
+
+    courseMap.forEach(node => {
+        dagData.push({
+            id: node.id,
+            parentIds: (node[relationField] || []).filter(parentId => courseMap.has(parentId))
+        });
+    });
+
+    return dagData;
+}
+
 function establishCourseMap(allCourses, relationField, map) {
 	// map all courses by id, initialize children array
 	allCourses.forEach(course => {

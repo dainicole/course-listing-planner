@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, createContext, useContext } from "react";
+import { useEffect, useState, createContext } from "react";
 import styles from "./page.module.css";
 import CourseCard from "./CourseCard";
-// TODO implement this:
-// import { buildFullTree } from "./view_tree/buildTree.js";
+import { buildDagForAllCourses } from "./view_tree/buildTree.js";
+import { DagViewAllCourses} from "./view_tree/DAG.jsx";
 
 // need to export this outside of home function so other files can see it
 export const CourseContext = createContext(null);
@@ -40,12 +40,9 @@ export default function Home() {
   }, []);
 
   // make sure courses fetched before doing trees
-  // TODO: implement this
-  // useEffect(() => {
-  //   if (courses.length > 0) {
-  //     setFullCourseTree(buildFullTree(courses));
-  //   }
-  // }, [courses]);
+  useEffect(() => {
+    setFullCourseTree(buildDagForAllCourses(courses));
+  }, [courses]);
   
   const toggleCourseTaken = (courseId) => {
     setTakenCourses(prev => {
@@ -105,11 +102,9 @@ export default function Home() {
         {viewMode === "graph" ? (
           <>
             <h2>Full Course Prereq/Postreq Tree</h2>
-            <p>
-              TODO: implement this
-            </p>
-            {/* TODO: implement this */}
-            {/* <CourseTree treeData={fullCourseTree} /> */}
+            <DagViewAllCourses
+              dagData={fullCourseTree}
+            />
           </>
         ) : (
           <>

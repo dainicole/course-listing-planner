@@ -110,3 +110,8 @@ export default function DagView({ dagData }) {
     />
   );
 }
+
+// TODO make this look better in browser
+export function DagViewAllCourses({ dagData }) {
+  return DagView({ dagData });
+}
