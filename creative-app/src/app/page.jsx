@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, createContext } from "react";
+import { useEffect, useState, createContext, useMemo } from "react";
 import styles from "./page.module.css";
 import CourseCard from "./CourseCard";
 import { buildDagForAllCourses } from "./view_tree/buildTree.js";
 import { DagViewAllCourses } from "./view_tree/DAG.jsx";
+import { degreeRequirements } from "./degreeRequirements";
 
 // need to export this outside of home function so other files can see it
 export const CourseContext = createContext(null);
@@ -39,6 +40,7 @@ export default function Home() {
   const [filterMode, setFilterMode] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [darkMode, setDarkMode] = useState(false);
+  const [selectedMajor, setSelectedMajor] = useState("Computer Science");
 
   useEffect(() => {
     const saved = localStorage.getItem("darkMode") === "true";
@@ -92,6 +94,15 @@ export default function Home() {
     });
   };
 
+  const { progressPercentage } = useMemo(() => {
+    const majorRequirements = degreeRequirements[selectedMajor] || [];
+    const takenForMajor = majorRequirements.filter(courseId => takenCourses.has(courseId));
+    const progressPercentage = majorRequirements.length
+      ? Math.round((takenForMajor.length / majorRequirements.length) * 100)
+      : 0;
+    return { majorRequirements, takenForMajor, progressPercentage };
+  }, [selectedMajor, takenCourses]);
+
 
   const sortedCourses = [...courses].sort((a, b) => {
     let x = a[sortField] || "";
@@ -125,6 +136,29 @@ export default function Home() {
         <button className={styles.darkModeToggle} onClick={toggleDarkMode}>
           {darkMode ? "Light Mode" : "Dark Mode"}
         </button>
+        <div className={styles.majorSelectContainer}>
+          <h2 className={styles.majorProgressHeader}>Required Core Courses Progress Bar:</h2>
+          <label htmlFor="majorSelect">Select Major:</label>
+          <select
+            id="majorSelect"
+            value={selectedMajor}
+            onChange={(e) => setSelectedMajor(e.target.value)}
+            className={styles.select}
+          >
+            {Object.keys(degreeRequirements).map((major) => (
+              <option key={major} value={major}>{major}</option>
+            ))}
+          </select>
+
+          <div className={styles.progressWrapper}>
+            <div
+              className={styles.progressBar}
+              style={{ width: `${progressPercentage}%` }}
+            >
+              {progressPercentage}%
+            </div>
+          </div>
+        </div>
 
         {/* toggle buttons between list or graph */}
         <div className={styles.viewToggle}>
@@ -139,7 +173,7 @@ export default function Home() {
           >Graph View
           </button>
         </div>
-        
+
         {/* show graph/list based on chosen view mode */}
         {viewMode === "graph" ? (
           <>
@@ -171,7 +205,7 @@ export default function Home() {
                 >
                   {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
                 </button>
-                
+
                 <select
                   value={filterMode}
                   onChange={(e) => setFilterMode(e.target.value)}
@@ -200,9 +234,9 @@ export default function Home() {
 
             <ul className={styles.courseList}>
               {filteredCourses.map((c) => (
-                <CourseCard 
-                  key={c.id} 
-                  c={c} 
+                <CourseCard
+                  key={c.id}
+                  c={c}
                   isTaken={takenCourses.has(c.id)}
                   isWanted={wantedCourses.has(c.id)}
                   onToggleTaken={toggleCourseTaken}
