@@ -6,7 +6,7 @@ import {
   graphStratify,
   sugiyama,
   layeringLongestPath,
-  decrossOpt,
+  decrossTwoLayer,
   coordGreedy
 } from "d3-dag";
 
@@ -35,7 +35,7 @@ export default function DagView({ dagData }) {
 
     const layout = sugiyama()
       .layering(layeringLongestPath())
-      .decross(decrossOpt())
+      .decross(decrossTwoLayer()) // non-optimal (but still good) decrossing so 131 postreqs don't crash it
       .coord(coordGreedy());
     layout(dag);
 
