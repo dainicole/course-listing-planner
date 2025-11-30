@@ -1,59 +1,43 @@
 export function buildPrereqTree(allCourses, rootCourseId) {
-	return buildTreeFromRoot(allCourses, "prereq_list", rootCourseId);
+	return buildDagForRoot(allCourses, "prereq_list", rootCourseId);
 }
 
 export function buildPostreqTree(allCourses, rootCourseId) {
-	return buildTreeFromRoot(allCourses, "postreq_list", rootCourseId);
+	return buildDagForRoot(allCourses, "postreq_list", rootCourseId);
 }
 
-// TODO finish fixing this to return multiple trees
-// export function buildFullTrees(allCourses) {
-// 	map = new Map();
-// 	childIds = new Set();
-// 	establishCourseMap(allCourses, relationField, isPrereqTree, map, childIds);
-	
-// 	// get roots
-// 	let roots;
-// 	if (defaultRootId && map.has(defaultRootId)) {
-// 		// make given param be the root
-// 		roots = [map.get(defaultRootId)];
-// 	} else {
-// 		// if no root explicitly given, pick nodes that were never children
-// 		roots = [];
-// 		map.forEach(node => {
-// 			if (!childIds.has(node.id)) roots.push(node);
-// 		});
-// 	}
+export function buildDagForRoot(allCourses, relationField, rootId) {
+    const courseMap = new Map();
+    establishCourseMap(allCourses, relationField, courseMap);
 
-// 	// put in correct format for our grapher
-// 	const toD3Format = node => ({
-// 		name: node.id,
-// 		children: node.children.map(toD3Format)
-// 	});
+    // get reachable nodes from root
+    const visited = new Set();
+    const stack = [courseMap.get(rootId)];
 
-// 	return roots.map(toD3Format);
+    while (stack.length) {
+        const node = stack.pop();
+        if (!node || visited.has(node.id)) {
+            continue;
+        }
+        visited.add(node.id);
 
-// 	return buildTreeFromRoot(allCourses, "postreq_list", false, "CSE 1301");
-// }
-
-function buildTreeFromRoot(allCourses, relationField, rootCourseId, map = null) 
-{
-	// conditional so buildFullTree won't remap all courses repeatedly
-	if (!map) {
-		map = new Map();
-		establishCourseMap(allCourses, relationField, map);
-	}
-
-	// get the root course from within the map
-	let rootNode = map.get(rootCourseId);
-
-	// in case of badly-formatted course ID
-	if (!rootNode) {
-        return [];
+        node.children.forEach(child => {
+            if (!visited.has(child.id)) {
+                stack.push(child);
+            }
+        });
     }
 
-	// put in correct format for grapher using recursion
-	return toD3Format(rootNode);
+    // convert visited nodes to d3-dag format
+    const dagData = [...visited].map(id => {
+        const node = courseMap.get(id);
+        return {
+            id: node.id,
+            parentIds: (node[relationField] || []).filter(p => visited.has(p))
+        };
+    });
+
+    return dagData;
 }
 
 function establishCourseMap(allCourses, relationField, map) {
@@ -69,28 +53,9 @@ function establishCourseMap(allCourses, relationField, map) {
 			const childNode = map.get(childId);
 			const thisNode = map.get(course.id);
 
-			if (!childNode || !thisNode) {
-				continue;
-			}
-
-			// course -> pre/postreq
-			thisNode.children.push(childNode);
+			if (childNode && thisNode) {
+                thisNode.children.push(childNode);
+            }
 		}
 	});
-}
-
-function toD3Format(node, visited = new Set()) {
-	// need a "visited" set to stop infinite recursion if same node shows up in multiple places
-    if (visited.has(node.id)) {
-        return { name: node.id, children: [] };
-    }
-
-    visited.add(node.id);
-
-    return {
-        name: node.id,
-        children: node.children.map(child =>
-            toD3Format(child, visited)
-        )
-    };
 }

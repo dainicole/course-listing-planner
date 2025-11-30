@@ -3,7 +3,7 @@
 import { useState, useContext, useEffect } from "react";
 import styles from "./page.module.css";
 import { CourseContext } from "./page.jsx";
-import CourseTree from "./view_tree/renderTree.jsx";
+import DagView from "./view_tree/DAG.jsx";
 import { buildPrereqTree, buildPostreqTree } from "./view_tree/buildTree.js";
 
 export default function CourseCard({ c, isTaken, onToggleTaken }) {
@@ -75,14 +75,14 @@ export default function CourseCard({ c, isTaken, onToggleTaken }) {
       {showPrereqs && (
         <div className={styles.courseDescription}>
           <strong>Prerequisite Tree:</strong>
-          <CourseTree treeData={prereqTree} />  
+          <DagView dagData={prereqTree} />
         </div>
       )}
 
       {showPostreqs && (
         <div className={styles.courseDescription}>
           <strong>Postrequisite Tree:</strong>
-          <CourseTree treeData={postreqTree} />  
+          <DagView dagData={postreqTree} />
         </div>
       )}
     </li>

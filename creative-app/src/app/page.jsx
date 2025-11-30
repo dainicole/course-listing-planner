@@ -3,7 +3,6 @@
 import { useEffect, useState, createContext, useContext } from "react";
 import styles from "./page.module.css";
 import CourseCard from "./CourseCard";
-import CourseTree from "./view_tree/renderTree.jsx";
 // TODO implement this:
 // import { buildFullTree } from "./view_tree/buildTree.js";
 

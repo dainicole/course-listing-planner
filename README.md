@@ -17,6 +17,7 @@ Ideas for creative portion:
 - history of when each class was offered?
 - ability to add courses to a comparison list (save to look at later)
 - can open courses in new tab?
+- dark mode?
 
 
 
