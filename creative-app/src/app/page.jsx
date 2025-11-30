@@ -4,7 +4,7 @@ import { useEffect, useState, createContext } from "react";
 import styles from "./page.module.css";
 import CourseCard from "./CourseCard";
 import { buildDagForAllCourses } from "./view_tree/buildTree.js";
-import { DagViewAllCourses} from "./view_tree/DAG.jsx";
+import { DagViewAllCourses } from "./view_tree/DAG.jsx";
 
 // need to export this outside of home function so other files can see it
 export const CourseContext = createContext(null);
@@ -18,23 +18,46 @@ async function fetchCourses() {
 export default function Home() {
   // giving vscode an example of what the type looks like so it doesn't show as "never[]"
   // note: this format needs to match what's returned from the api call
-  const [courses, setCourses] = useState([{
-    id: "",
-    title: "",
-    description: "",
-    prereqs: "",
-    prereq_list: [""],
-    postreq_list: [""]
-  }]);
+  const [courses, setCourses] = useState([
+    {
+      id: "",
+      title: "",
+      description: "",
+      prereqs: "",
+      prereq_list: [""],
+      postreq_list: [""],
+    },
+  ]);
+
   const [sortField, setSortField] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
   // TODO: add this function for making tree with all possible courses shown
   const [fullCourseTree, setFullCourseTree] = useState([]);
   const [viewMode, setViewMode] = useState("list");
   const [takenCourses, setTakenCourses] = useState(new Set());
+  const [wantedCourses, setWantedCourses] = useState(new Set());
   const [filterMode, setFilterMode] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [wantedCourses, setWantedCourses] = useState(new Set());
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode") === "true";
+    setDarkMode(saved);
+    if (saved) document.body.classList.add("dark");
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+
+    if (newMode) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+
+    localStorage.setItem("darkMode", newMode);
+  };
 
   useEffect(() => {
     fetchCourses().then(setCourses);
@@ -44,7 +67,7 @@ export default function Home() {
   useEffect(() => {
     setFullCourseTree(buildDagForAllCourses(courses));
   }, [courses]);
-  
+
   const toggleCourseTaken = (courseId) => {
     setTakenCourses(prev => {
       const newSet = new Set(prev);
@@ -58,15 +81,15 @@ export default function Home() {
   };
 
   const toggleCourseWanted = (courseId) => {
-  setWantedCourses(prev => {
-    const newSet = new Set(prev);
-    if (newSet.has(courseId)) {
-      newSet.delete(courseId);
-    } else {
-      newSet.add(courseId);
-    }
-    return newSet;
-  });
+    setWantedCourses(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(courseId)) {
+        newSet.delete(courseId);
+      } else {
+        newSet.add(courseId);
+      }
+      return newSet;
+    });
   };
 
 
@@ -81,17 +104,17 @@ export default function Home() {
 
   //filter courses based on taken status or search bar
   const filteredCourses = sortedCourses.filter((c) => {
-  if (filterMode === "taken" && !takenCourses.has(c.id)) return false;
-  if (filterMode === "not-taken" && takenCourses.has(c.id)) return false;
-  if (filterMode === "wanted" && !wantedCourses.has(c.id)) return false;
-  if (filterMode === "not-wanted" && wantedCourses.has(c.id)) return false;
+    if (filterMode === "taken" && !takenCourses.has(c.id)) return false;
+    if (filterMode === "not-taken" && takenCourses.has(c.id)) return false;
+    if (filterMode === "wanted" && !wantedCourses.has(c.id)) return false;
+    if (filterMode === "not-wanted" && wantedCourses.has(c.id)) return false;
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       const matchesTitle = c.title?.toLowerCase().includes(query);
       const matchesId = c.id?.toLowerCase().includes(query);
       return matchesTitle || matchesId;
     }
-    
+
     return true;
   });
 
@@ -99,6 +122,9 @@ export default function Home() {
     <CourseContext.Provider value={courses}>
       <main className={styles.main}>
         <h1 className={styles.header}>Course Viewer</h1>
+        <button className={styles.darkModeToggle} onClick={toggleDarkMode}>
+          {darkMode ? "Light Mode" : "Dark Mode"}
+        </button>
 
         {/* toggle buttons between list or graph */}
         <div className={styles.viewToggle}>

@@ -31,7 +31,7 @@ export default function DagView({ dagData }) {
   useEffect(() => {
     if (!dagData || dagData.length === 0) return;
 
-    let dag = graphStratify()(dagData);
+    const dag = graphStratify()(dagData);
 
     const layout = sugiyama()
       .layering(layeringLongestPath())
@@ -62,6 +62,11 @@ export default function DagView({ dagData }) {
     const offsetX = containerWidth / 2 - ((minX + maxX) / 2) * scale;
     const offsetY = height / 2 - ((minY + maxY) / 2) * scale;
 
+    //for light/dark mode
+    const textColor = getComputedStyle(document.body).getPropertyValue("--text").trim();
+    const borderColor = getComputedStyle(document.body).getPropertyValue("--border").trim();
+    const cardColor = getComputedStyle(document.body).getPropertyValue("--bg-card").trim();
+
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
@@ -73,7 +78,8 @@ export default function DagView({ dagData }) {
       .data(links)
       .enter()
       .append("path")
-      .attr("stroke", "black")
+      .attr("stroke", borderColor)
+      .attr("stroke-width", 1.5)
       .attr("fill", "none")
       .attr("d", l => `M${l.source.x * scale},${l.source.y * scale}L${l.target.x * scale},${l.target.y * scale}`);
 
@@ -86,7 +92,8 @@ export default function DagView({ dagData }) {
       .attr("r", nodeRadius)
       .attr("cx", d => d.x * scale)
       .attr("cy", d => d.y * scale)
-      .attr("fill", "steelblue");
+      .attr("fill", "steelblue")
+      .attr("stroke", borderColor)
 
     // draw labels
     g.append("g")
@@ -97,7 +104,9 @@ export default function DagView({ dagData }) {
       .attr("x", d => d.x * scale + nodeRadius + 5)
       .attr("y", d => d.y * scale + 5)
       .text(d => d.data.id)
-      .style("font-size", "12px");
+      .style("font-size", "12px")
+      .style("fill", textColor)
+      .style("dominant-baseline", "middle");
 
   }, [dagData, containerWidth]);
 
@@ -106,12 +115,12 @@ export default function DagView({ dagData }) {
       ref={svgRef}
       width="100%"
       height={height}
-      style={{ border: "1px solid black", display: "block" }}
+      style={{ border: "1px solid var(--border)", display: "block" }}
     />
   );
 }
 
 // TODO make this look better in browser
 export function DagViewAllCourses({ dagData }) {
-  return DagView({ dagData });
+  return <DagView dagData={dagData} />;
 }

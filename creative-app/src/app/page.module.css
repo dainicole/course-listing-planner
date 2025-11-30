@@ -1,11 +1,39 @@
+:root {
+  --bg: #ffffff;
+  --bg-alt: #fafafa;
+  --bg-card: #f5f5f5;
+  --text: #000000;
+  --border: #ddd;
+  --hover: #f0f0f0;
+}
+
+:global(body.dark) {
+  --bg: #121212;
+  --bg-alt: #1e1e1e;
+  --bg-card: #222;
+  --text: #eaeaea;
+  --border: #444;
+  --hover: #333;
+}
+
+:global(body) {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
 .main {
   padding: 2rem;
   font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 .header {
   font-size: 2rem;
   margin-bottom: 1rem;
+  color: var(--text);
 }
 
 .viewToggle {
@@ -13,9 +41,10 @@
   gap: 0.5rem;
   margin-bottom: 2rem;
   padding: 0.5rem;
-  background: #f5f5f5;
+  background: var(--bg-card);
   border-radius: 8px;
   width: fit-content;
+  border: 1px solid var(--border);
 }
 
 .filterBar {
@@ -32,18 +61,21 @@
   flex-wrap: wrap;
 }
 
+.searchInput {
+  width: 300px;
+  max-width: 100%;
+}
+
 .searchInput,
 .select,
 .button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
-}
-
-.searchInput {
-  border: 2px solid #ddd;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  min-width: 300px;
-  transition: border-color 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .searchInput:focus {
@@ -53,20 +85,16 @@
 
 .button {
   cursor: pointer;
-  border: 1px solid #ddd;
-  border-radius: 2px;
-  background: white;
-  transition: 0.2s ease;
 }
 
 .button:hover {
-  background: #f0f0f0;
+  background: var(--hover);
 }
 
 .activeButton {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
+  background: #007bff !important;
+  color: white !important;
+  border-color: #007bff !important;
 }
 
 .courseList {
@@ -77,25 +105,26 @@
 .courseCard {
   padding: 1rem;
   margin-bottom: 1rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 8px;
   transition: 0.2s ease;
-  background: #fafafa;
+  background: var(--bg-alt);
+  color: var(--text);
 }
 
 .courseCard:hover {
-  background: #f0f0f0;
+  background: var(--hover);
 }
 
 .wantedCourse {
   background: #ffebee !important;
-  border-color: #e57373;
+  border-color: #e57373 !important;
   border-width: 2px;
   box-shadow: 0 2px 8px rgba(229, 115, 115, 0.2);
 }
 
 .wantedCourse .courseTitle {
-  color: #c62828;
+  color: #c62828 !important;
 }
 
 .takenCourse {
@@ -109,15 +138,36 @@
   color: #2e7d32 !important;
 }
 
+:global(body.dark) .wantedCourse {
+  background: #4a1010 !important;
+  border-color: #c62828 !important;
+  box-shadow: 0 2px 8px rgba(198, 40, 40, 0.3);
+}
+
+:global(body.dark) .wantedCourse .courseTitle {
+  color: #ff8a80 !important;
+}
+
+:global(body.dark) .takenCourse {
+  background: #1b3d1b !important;
+  border-color: #2e7d32 !important;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+}
+
+:global(body.dark) .takenCourse .courseTitle {
+  color: #a5d6a7 !important;
+}
+
 .checkboxContainer {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: white;
-  border: 2px solid #ddd;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
   border-radius: 2px;
   transition: all 0.3s ease;
+  color: var(--text);
 }
 
 .checkboxTaken,
@@ -138,7 +188,7 @@
 .checkboxLabel {
   cursor: pointer;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text);
   font-weight: 500;
 }
 
@@ -157,11 +207,38 @@
 
 .courseTitle {
   font-size: 1.3rem;
+  color: var(--text);
 }
 
 .courseDescription {
   margin-top: 1rem;
   padding: 0.75rem;
-  background: white;
+  background: var(--bg-card);
   border-radius: 2px;
+  color: var(--text);
+}
+
+.noCourses {
+  color: var(--text);
+  opacity: 0.7;
+  font-style: italic;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.darkModeToggle {
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  background: var(--bg-card);
+  color: var(--text);
+  transition: 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 10px;
+}
+
+.darkModeToggle:hover {
+  background: var(--hover);
 }
