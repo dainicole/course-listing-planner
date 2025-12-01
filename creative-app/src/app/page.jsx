@@ -228,7 +228,7 @@ export default function Home() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={styles.searchInput}
-              />
+              ></input>
             </div>
 
             {filteredCourses.length === 0 && (

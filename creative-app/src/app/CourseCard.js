@@ -36,7 +36,7 @@ export default function CourseCard({ c, isTaken, isWanted, onToggleTaken, onTogg
               checked={isTaken}
               onChange={() => onToggleTaken(c.id)}
               className={styles.checkboxTaken}
-            />
+            ></input>
             <label htmlFor={`course-${c.id}`} className={styles.checkboxLabel}>
               Taken
             </label>
@@ -48,8 +48,7 @@ export default function CourseCard({ c, isTaken, isWanted, onToggleTaken, onTogg
               id={`wanted-${c.id}`}
               checked={isWanted}
               onChange={() => onToggleWanted(c.id)}
-              className={styles.checkboxWanted}
-            />
+              className={styles.checkboxWanted}></input>
             <label htmlFor={`wanted-${c.id}`} className={styles.checkboxLabel}>
               Want to Take
             </label>
@@ -94,7 +93,7 @@ export default function CourseCard({ c, isTaken, isWanted, onToggleTaken, onTogg
       {showPrereqs && (
         <div className={styles.courseDescription}>
           <strong>Prerequisite Tree:</strong>
-          <DagView dagData={prereqTree} rootNodeId={c.id} />
+          <DagView dagData={prereqTree} rootNodeId={c.id}/>
         </div>
       )}
 
