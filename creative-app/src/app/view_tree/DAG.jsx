@@ -57,7 +57,7 @@ export default function DagView({ dagData, rootNodeId = null }) {
     const maxY = Math.max(...ys);
 
     const padding = 40;
-    const nodeRadius = 12;
+    const nodeRadius = 15;
     const labelPadding = 40; // extra space for labels
 
     // compute scale using dynamic container width
@@ -91,13 +91,18 @@ export default function DagView({ dagData, rootNodeId = null }) {
 
     // draw nodes
     g.append("g")
-      .selectAll("circle")
+      .selectAll("rect")
       .data(nodes)
       .enter()
-      .append("circle")
-      .attr("r", nodeRadius)
-      .attr("cx", d => d.x * scale)
-      .attr("cy", d => d.y * scale)
+      .append("rect")
+      // center
+      .attr("x", d => d.x * scale - (nodeRadius * 2))
+      .attr("y", d => d.y * scale - nodeRadius)
+      .attr("width", nodeRadius * 4)
+      .attr("height", nodeRadius * 2)
+      // rounded corners
+      .attr("rx", nodeRadius)
+      .attr("ry", nodeRadius)
       .attr("fill", d => {
         const isTaken = takenCourses.has(d.data.id);
         const isWanted = wantedCourses.has(d.data.id);
@@ -112,7 +117,7 @@ export default function DagView({ dagData, rootNodeId = null }) {
       .attr("stroke-width", d => {
         const isRoot = d.data.id === rootNodeId;
         return isRoot ? 3 : 1;
-      })
+      });
 
     // draw labels
     g.append("g")
@@ -120,12 +125,16 @@ export default function DagView({ dagData, rootNodeId = null }) {
       .data(nodes)
       .enter()
       .append("text")
-      .attr("x", d => d.x * scale + nodeRadius + 5)
-      .attr("y", d => d.y * scale + 5)
+      // set location to center of node
+      .attr("x", d => d.x * scale)
+      .attr("y", d => d.y * scale)
       .text(d => d.data.id)
-      .style("font-size", "12px")
+      .style("font-size", "10px")
       .style("fill", textColor)
-      .style("dominant-baseline", "middle");
+      // center text
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle");
+
 
   }, [dagData, containerWidth]);
 
