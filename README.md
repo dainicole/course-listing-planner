@@ -16,13 +16,6 @@ Creative Portion:
 <br>5. A progress bar for required core CS courses is shown at the top of the page. It will update accordingly as a user checks off taken courses that fall under the category. A user can select their specific CS related major to see their specific core requirements and how far they are to completing all the courses.
 <br>6. The prereq/postreq graph nodes are color-coded based on the classes you've taken / marked that you want to take.
 
-<br>Ideas for creative portion:
-- show history for which classes you've done prereq/postreq trees for (easy click back to them)
-- workday integration?
-- history of when each class was offered?
-- ability to add courses to a comparison list (save to look at later)
-- can open courses in new tab?
-
 
 <br><br><br><br><br><br><br><br><br>
 Rubric
