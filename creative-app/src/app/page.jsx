@@ -9,6 +9,8 @@ import { degreeRequirements } from "./degreeRequirements";
 
 // need to export this outside of home function so other files can see it
 export const CourseContext = createContext(null);
+export const TakenCoursesContext = createContext(null);
+export const WantedCoursesContext = createContext(null);
 
 async function fetchCourses() {
   const res = await fetch("/api/courses", { cache: "no-store" });
@@ -32,7 +34,6 @@ export default function Home() {
 
   const [sortField, setSortField] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
-  // TODO: add this function for making tree with all possible courses shown
   const [fullCourseTree, setFullCourseTree] = useState([]);
   const [viewMode, setViewMode] = useState("list");
   const [takenCourses, setTakenCourses] = useState(new Set());
@@ -131,6 +132,8 @@ export default function Home() {
 
   return (
     <CourseContext.Provider value={courses}>
+    <TakenCoursesContext.Provider value={takenCourses}>
+    <WantedCoursesContext.Provider value={wantedCourses}>
       <main className={styles.main}>
         <h1 className={styles.header}>Course Viewer</h1>
         <button className={styles.darkModeToggle} onClick={toggleDarkMode}>
@@ -247,6 +250,8 @@ export default function Home() {
           </>
         )}
       </main>
+    </WantedCoursesContext.Provider>
+    </TakenCoursesContext.Provider>
     </CourseContext.Provider>
   );
 }

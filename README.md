@@ -14,6 +14,7 @@ Creative Portion:
 <br>3. A user can search for any course in the list by course title or course number, which will filter the list accordingly.
 <br>4. A user can change the setting of the webpage from light mode to dark mode. Highlighted course card colors as well as general text colors will change accordingly.
 <br>5. A progress bar for required core CS courses is shown at the top of the page. It will update accordingly as a user checks off taken courses that fall under the category. A user can select their specific CS related major to see their specific core requirements and how far they are to completing all the courses.
+<br>6. The prereq/postreq graph nodes are color-coded based on the classes you've taken / marked that you want to take.
 
 <br>Ideas for creative portion:
 - show history for which classes you've done prereq/postreq trees for (easy click back to them)

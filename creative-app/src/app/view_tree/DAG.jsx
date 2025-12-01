@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import * as d3 from "d3";
+import { TakenCoursesContext, WantedCoursesContext } from "../page";
 import {
   graphStratify,
   sugiyama,
@@ -10,7 +11,12 @@ import {
   coordGreedy
 } from "d3-dag";
 
-export default function DagView({ dagData }) {
+
+export default function DagView({ dagData, rootNodeId = null }) {
+  // get these global sets for coloring nodes
+  const takenCourses = useContext(TakenCoursesContext);
+  const wantedCourses = useContext(WantedCoursesContext);
+
   const svgRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(800); // default width
   const height = 400; // fixed height
@@ -92,8 +98,21 @@ export default function DagView({ dagData }) {
       .attr("r", nodeRadius)
       .attr("cx", d => d.x * scale)
       .attr("cy", d => d.y * scale)
-      .attr("fill", "steelblue")
-      .attr("stroke", borderColor)
+      .attr("fill", d => {
+        const isTaken = takenCourses.has(d.data.id);
+        const isWanted = wantedCourses.has(d.data.id);
+        if (isTaken) return "green";
+        if (isWanted) return "orange";
+        return "steelblue";
+      })
+      .attr("stroke", d => {
+        const isRoot = d.data.id === rootNodeId;
+        return isRoot ? "hotpink" : borderColor;
+      })
+      .attr("stroke-width", d => {
+        const isRoot = d.data.id === rootNodeId;
+        return isRoot ? 3 : 1;
+      })
 
     // draw labels
     g.append("g")

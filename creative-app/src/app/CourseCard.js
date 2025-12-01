@@ -94,14 +94,14 @@ export default function CourseCard({ c, isTaken, isWanted, onToggleTaken, onTogg
       {showPrereqs && (
         <div className={styles.courseDescription}>
           <strong>Prerequisite Tree:</strong>
-          <DagView dagData={prereqTree} />
+          <DagView dagData={prereqTree} rootNodeId={c.id} />
         </div>
       )}
 
       {showPostreqs && (
         <div className={styles.courseDescription}>
           <strong>Postrequisite Tree:</strong>
-          <DagView dagData={postreqTree} />
+          <DagView dagData={postreqTree}  rootNodeId={c.id} />
         </div>
       )}
     </li>
