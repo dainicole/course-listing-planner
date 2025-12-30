@@ -1,8 +1,5 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/tcXJhemk)
 # CSE330
-Ayla Burba 517938 a-burba
-
-Nicole Dai 522011 dainicole
+Ayla Burba & Nicole Dai
 
 
 Project description: We're making a course planner for the CS department where you can easily see the prerequisites for different classes to help decide which classes you should prioritize taking earlier. For example, if you want to take CSE 417, it might have a prerequisite of matrix algebra, which itself needs calculus. Our website would display all of the prerequisites so you don't need to manually search for what each class is. You could also see what other CS courses a given class is a prerequisite for. For example, only after you've taken CSE 361 can you take CSE 422, which is itself a prerequisite for CSE 522, 532, and 542.
