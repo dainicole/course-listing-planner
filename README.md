@@ -1,4 +1,4 @@
-# CSE330
+# CSE330 Final Project - Course Listing Planner
 Ayla Burba & Nicole Dai
 
 
