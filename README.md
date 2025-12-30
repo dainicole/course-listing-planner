@@ -36,4 +36,3 @@ Best Practices (5 points)
 | 3        | Code is readable and well formatted                                             |             
 | 2        | All pages pass the html validator                                               |              
 
-## Creative Portion (20 points)
